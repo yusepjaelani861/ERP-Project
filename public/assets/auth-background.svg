@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080">
+    <defs>
+        <linearGradient x1="-8.677%" y1="-16.376%" x2="50%" y2="50%" id="a">
+            <stop stop-opacity=".01" offset="0%" />
+            <stop stop-opacity=".02" offset="100%" />
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="67.27%" y2="87.984%" id="b">
+            <stop stop-opacity=".01" offset="0%" />
+            <stop stop-opacity=".04" offset="100%" />
+        </linearGradient>
+        <linearGradient x1="59.426%" y1="44.447%" x2="75.046%" y2="64.879%" id="c">
+            <stop stop-opacity=".02" offset="0%" />
+            <stop stop-opacity="0" offset="100%" />
+        </linearGradient>
+        <linearGradient x1="77.622%" y1="34.787%" x2="61.214%" y2="56.25%" id="d">
+            <stop stop-opacity=".05" offset="0%" />
+            <stop stop-opacity=".01" offset="100%" />
+        </linearGradient>
+        <linearGradient x1="-2.645%" y1="42.881%" x2="88.122%" y2="100%" id="e">
+            <stop stop-opacity=".02" offset="0%" />
+            <stop stop-opacity=".03" offset="100%" />
+        </linearGradient>
+    </defs>
+    <g fill-rule="nonzero" fill="none">
+        <path fill="url(#a)" d="M0 624.483 630.328 0H0z" transform="matrix(1 0 0 -1 0 1080)" />
+        <path fill="url(#b)" d="m1846.628 1080-50.693-402.16H1920V1080z" transform="matrix(1 0 0 -1 0 1080)" />
+        <path fill="url(#c)" d="M1920 32.608 0 836.268v15.809L572 1080h1348z" transform="matrix(1 0 0 -1 0 1080)" />
+        <path fill="url(#d)" d="M1920 916.962 0 408.417V185.764L246.667 0H1920z" transform="matrix(1 0 0 -1 0 1080)" />
+        <path fill="url(#e)" d="M1061.553 1080H0V0h236.049z" transform="matrix(1 0 0 -1 0 1080)" />
+        <g opacity=".3">
+            <path fill="url(#a)" d="M0 624.483 630.328 0H0z" transform="matrix(1 0 0 -1 -1 1080)" />
+            <path fill="url(#b)" d="m1846.628 1080-50.693-402.16H1920V1080z" transform="matrix(1 0 0 -1 -1 1080)" />
+            <path fill="url(#c)" d="M1920 32.608 0 836.268v15.809L572 1080h1348z"
+                transform="matrix(1 0 0 -1 -1 1080)" />
+            <path fill="url(#d)" d="M1920 916.962 0 408.417V185.764L246.667 0H1920z"
+                transform="matrix(1 0 0 -1 -1 1080)" />
+            <path fill="url(#e)" d="M1061.553 1080H0V0h236.049z" transform="matrix(1 0 0 -1 -1 1080)" />
+        </g>
+    </g>
+</svg>
