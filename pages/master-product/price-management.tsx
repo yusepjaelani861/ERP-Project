@@ -1,30 +1,21 @@
 import {
-  Alert,
-  Anchor,
-  Badge,
-  Box,
+  Alert, Box,
   Button,
   Checkbox,
-  Flex,
-  HoverCard,
-  LoadingOverlay,
+  Flex, LoadingOverlay,
   Menu,
   Select,
   Table,
-  Tabs,
-  Text,
-  TextInput,
+  Tabs, TextInput
 } from "@mantine/core"
+import MainLayout from "components/layouts/MainLayout"
 import FilterItem from "components/molecules/FilterItem"
 import SelectItemWithImage from "components/molecules/SelectItemWithImage"
 import TH from "components/molecules/TH"
 import TableNoData from "components/organisms/TableNoData"
-import Link from "next/link"
 import { useCallback, useState } from "react"
-import { AiFillCaretDown, AiFillInfoCircle } from "react-icons/ai"
-import { FiAlertCircle, FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi"
-import { ImFire, ImSad2 } from "react-icons/im"
-import { MdNewReleases } from "react-icons/md"
+import { AiFillCaretDown } from "react-icons/ai"
+import { FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi"
 import { useUpdateEffect } from "usehooks-ts"
 const MasterPriceManagementPage = () => {
   const [filter, setFilter] = useState("Master Product Name")
@@ -52,7 +43,7 @@ const MasterPriceManagementPage = () => {
   }, [activeTab])
   const [showAlert, setShowAlert] = useState(true)
   return (
-    <>
+    <MainLayout title="Price Management">
       <Flex direction={"column"} p={16} gap={16}>
         {showAlert && (
           <Alert
@@ -279,7 +270,7 @@ const MasterPriceManagementPage = () => {
           </Box>
         </Tabs.Panel>
       </Tabs>
-    </>
+    </MainLayout>
   )
 }
 

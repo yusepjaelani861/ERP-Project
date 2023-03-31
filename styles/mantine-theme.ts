@@ -28,6 +28,14 @@ const mantineTheme: MantineThemeOverride = {
         fontWeight: 500,
       },
     },
+    '.mantine-Table-root tbody tr td': {
+      padding: '12px 16px',
+      fontSize: 12,
+      color: colors.gray[8]
+    },
+    '.mantine-Table-root[data-hover] tbody tr:hover': {
+      backgroundColor: colors.gray[0]
+    }
   }),
 }
 export default mantineTheme

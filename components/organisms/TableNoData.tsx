@@ -1,5 +1,4 @@
 import { Flex, Text } from "@mantine/core"
-import Image from "next/image"
 
 const TableNoData = () => {
   return (
@@ -9,7 +8,7 @@ const TableNoData = () => {
       align={"center"}
       gap={8}
       sx={{
-        width: "100vw",
+        width: "100%",
         height: "160px",
         position: "sticky",
         left: 0,

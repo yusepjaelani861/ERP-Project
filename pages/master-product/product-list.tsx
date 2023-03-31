@@ -13,8 +13,9 @@ import {
   Table,
   Tabs,
   Text,
-  TextInput,
+  TextInput
 } from "@mantine/core"
+import MainLayout from "components/layouts/MainLayout"
 import FilterItem from "components/molecules/FilterItem"
 import SelectItemWithImage from "components/molecules/SelectItemWithImage"
 import TH from "components/molecules/TH"
@@ -22,7 +23,7 @@ import TableNoData from "components/organisms/TableNoData"
 import Link from "next/link"
 import { useCallback, useState } from "react"
 import { AiFillCaretDown, AiFillInfoCircle } from "react-icons/ai"
-import { FiAlertCircle, FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi"
+import { FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi"
 import { ImFire, ImSad2 } from "react-icons/im"
 import { MdNewReleases } from "react-icons/md"
 import { useUpdateEffect } from "usehooks-ts"
@@ -55,11 +56,11 @@ const MasterProductListPage = () => {
     fetchData()
   }, [activeTab])
   return (
-    <>
+    <MainLayout title="Master Product">
       <Flex direction={"column"} p={16} gap={16}>
         <Alert
           color={"violet"}
-          icon={<FiAlertCircle />}
+          icon={<AiFillInfoCircle />}
           sx={({ colors }) => ({
             borderTop: `3px solid ${colors.violet[6]}`,
             "& .mantine-Alert-message": {
@@ -435,7 +436,7 @@ const MasterProductListPage = () => {
         </Box>
         <LoadingOverlay visible={isLoading} />
       </Box>
-    </>
+    </MainLayout>
   )
 }
 

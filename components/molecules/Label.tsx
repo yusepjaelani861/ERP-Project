@@ -1,14 +1,15 @@
-import { Box, Flex, Text, Tooltip } from "@mantine/core"
+import { Box, Flex, Sx, Text, Tooltip } from "@mantine/core"
 import React from "react"
 import { AiFillInfoCircle } from "react-icons/ai"
 interface Props {
   label: string
   info?: string
   withAsterisk?: boolean
+  sx?: Sx
 }
-const Label: React.FC<Props> = ({ info, label, withAsterisk = false }) => {
+const Label: React.FC<Props> = ({ info, label, withAsterisk = false, sx }) => {
   return (
-    <Flex gap={4} align="center" mb={8}>
+    <Flex gap={4} align="center" mb={8} sx={sx}>
       {withAsterisk && (
         <Text sx={({ colors }) => ({ color: colors.red[5] })}>*</Text>
       )}
