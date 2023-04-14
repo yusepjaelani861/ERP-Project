@@ -1,16 +1,18 @@
-import { AppShell, Sx } from "@mantine/core"
-import Header from "components/organisms/Header"
-import Navbar from "components/organisms/Navbar"
-import React from "react"
-import useNavbarExpand from "store/navbarExpand"
+import { AppShell, Sx } from "@mantine/core";
+import Header from "components/organisms/Header";
+import Navbar from "components/organisms/Navbar";
+import { UserLogin } from "interfaces/user";
+import React from "react";
+import useNavbarExpand from "store/navbarExpand";
 interface Props {
-  children: React.ReactNode
-  title: string
-  sx?: Sx
-  footer?: React.ReactElement
+  children: React.ReactNode;
+  title: string;
+  sx?: Sx;
+  footer?: React.ReactElement;
+  user: UserLogin;
 }
-const MainLayout: React.FC<Props> = ({ children, title, sx, footer }) => {
-  const { expanded } = useNavbarExpand()
+const MainLayout: React.FC<Props> = ({ children, title, sx, footer, user }) => {
+  const { expanded } = useNavbarExpand();
   return (
     <AppShell
       sx={[
@@ -28,13 +30,13 @@ const MainLayout: React.FC<Props> = ({ children, title, sx, footer }) => {
         },
         sx,
       ]}
-      header={<Header title={title} />}
+      header={<Header title={title} user={user} />}
       navbar={<Navbar />}
       footer={footer}
     >
       {children}
     </AppShell>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;

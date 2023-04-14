@@ -13,24 +13,31 @@ import {
   Table,
   Text,
   Textarea,
-  TextInput
-} from "@mantine/core"
-import InfoTooltip from "components/atoms/InfoTooltip"
-import MainLayout from "components/layouts/MainLayout"
-import InputGroup from "components/molecules/InputGroup"
-import Label from "components/molecules/Label"
-import SelectItemWithImage from "components/molecules/SelectItemWithImage"
-import { useState } from "react"
-import { AiOutlinePlus } from "react-icons/ai"
-import { FiRefreshCw } from "react-icons/fi"
+  TextInput,
+} from "@mantine/core";
+import InfoTooltip from "components/atoms/InfoTooltip";
+import MainLayout from "components/layouts/MainLayout";
+import InputGroup from "components/molecules/InputGroup";
+import Label from "components/molecules/Label";
+import SelectItemWithImage from "components/molecules/SelectItemWithImage";
+import { UserLogin } from "interfaces/user";
+import { GetServerSidePropsContext } from "next";
+import { useEffect, useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
+import { FiRefreshCw } from "react-icons/fi";
+import authMiddleware from "utils/authMiddleware";
 
-const AddShopeeProductPage = () => {
-  const [onSaleShop, setOnSaleShop] = useState<string[]>([])
-  const [productName, setProductName] = useState("")
+interface PageProps {
+  user: UserLogin;
+  slug: string;
+}
+
+const AddShopeeProductPage = ({ user, slug }: PageProps) => {
+  const [onSaleShop, setOnSaleShop] = useState<string[]>([]);
+  const [productName, setProductName] = useState("");
+
   return (
-    <MainLayout
-      title="Products / Shopee / Add Product"
-    >
+    <MainLayout title="Products / Shopee / Add Product" user={user}>
       <Box p={16} mb={50}>
         <Flex
           direction={"column"}
@@ -68,6 +75,12 @@ const AddShopeeProductPage = () => {
                       {
                         label: "yusep8601",
                         value: "yusep8601",
+                        image:
+                          "https://cdn-erp.ginee.com/crm/stag/genie_20200108115600831_0236379310.png",
+                      },
+                      {
+                        label: "yusep8602",
+                        value: "yusep8602",
                         image:
                           "https://cdn-erp.ginee.com/crm/stag/genie_20200108115600831_0236379310.png",
                       },
@@ -515,7 +528,25 @@ const AddShopeeProductPage = () => {
         </Button>
       </Flex>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default AddShopeeProductPage
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const auth = await authMiddleware(context);
+  if (!auth.status) {
+    return {
+      redirect: auth.redirect,
+    };
+  }
+
+  return {
+    props: {
+      user: auth.props?.user,
+      slug: context.params?.slug,
+    },
+  };
+};
+
+export default AddShopeeProductPage;

@@ -3,13 +3,14 @@ import Image from "next/image"
 import React from "react"
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  value: string
-  label: string
-  image: string
+  value: string | ""
+  label: string | ""
+  image: string | ""
+  slug: string | ""
 }
 
 const SelectItemWithImage = React.forwardRef<HTMLDivElement, ItemProps>(
-  ({ value, image, label, ...others }: ItemProps, ref) => (
+  ({ value, image, label, slug, ...others }: ItemProps, ref) => (
     <Box
       ref={ref}
       sx={{

@@ -13,50 +13,58 @@ import {
   Table,
   Tabs,
   Text,
-  TextInput
-} from "@mantine/core"
-import MainLayout from "components/layouts/MainLayout"
-import FilterItem from "components/molecules/FilterItem"
-import SelectItemWithImage from "components/molecules/SelectItemWithImage"
-import TH from "components/molecules/TH"
-import TableNoData from "components/organisms/TableNoData"
-import Link from "next/link"
-import { useCallback, useState } from "react"
-import { AiFillCaretDown, AiFillInfoCircle } from "react-icons/ai"
-import { FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi"
-import { ImFire, ImSad2 } from "react-icons/im"
-import { MdNewReleases } from "react-icons/md"
-import { useUpdateEffect } from "usehooks-ts"
-const MasterProductListPage = () => {
-  const [filter, setFilter] = useState("Master Product Name")
-  const [stockStatus, setStockStatus] = useState("All")
-  const [keyword, setKeyword] = useState("")
-  const [storeWithoutSales, setStoreWithoutSales] = useState("")
-  const [bindingStatus, setBindingStatus] = useState("")
+  TextInput,
+} from "@mantine/core";
+import MainLayout from "components/layouts/MainLayout";
+import FilterItem from "components/molecules/FilterItem";
+import SelectItemWithImage from "components/molecules/SelectItemWithImage";
+import TH from "components/molecules/TH";
+import TableNoData from "components/organisms/TableNoData";
+import { UserLogin } from "interfaces/user";
+import { GetServerSidePropsContext } from "next";
+import Link from "next/link";
+import { useCallback, useState } from "react";
+import { AiFillCaretDown, AiFillInfoCircle } from "react-icons/ai";
+import { FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi";
+import { ImFire, ImSad2 } from "react-icons/im";
+import { MdNewReleases } from "react-icons/md";
+import { useUpdateEffect } from "usehooks-ts";
+import authMiddleware from "utils/authMiddleware";
+
+interface PageProps {
+  user: UserLogin;
+}
+
+const MasterProductListPage = ({ user }: PageProps) => {
+  const [filter, setFilter] = useState("Master Product Name");
+  const [stockStatus, setStockStatus] = useState("All");
+  const [keyword, setKeyword] = useState("");
+  const [storeWithoutSales, setStoreWithoutSales] = useState("");
+  const [bindingStatus, setBindingStatus] = useState("");
 
   const resetFilterHandler = useCallback(() => {
-    setFilter("Master Product Name")
-    setStockStatus("All")
-    setKeyword("")
-    setStoreWithoutSales("")
-    setBindingStatus("")
-  }, [])
+    setFilter("Master Product Name");
+    setStockStatus("All");
+    setKeyword("");
+    setStoreWithoutSales("");
+    setBindingStatus("");
+  }, []);
 
-  const [activeTab, setActiveTab] = useState("all")
-  const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("all");
+  const [isLoading, setIsLoading] = useState(false);
 
   /** Simulation */
   const fetchData = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }
+      setIsLoading(false);
+    }, 1000);
+  };
   useUpdateEffect(() => {
-    fetchData()
-  }, [activeTab])
+    fetchData();
+  }, [activeTab]);
   return (
-    <MainLayout title="Master Product">
+    <MainLayout title="Master Product" user={user}>
       <Flex direction={"column"} p={16} gap={16}>
         <Alert
           color={"violet"}
@@ -302,7 +310,13 @@ const MasterProductListPage = () => {
           paddingBottom: 6,
         }}
       >
-        <Flex justify={"space-between"} align="center" gap={8} px={16} sx={{backgroundColor: 'white'}}>
+        <Flex
+          justify={"space-between"}
+          align="center"
+          gap={8}
+          px={16}
+          sx={{ backgroundColor: "white" }}
+        >
           <Tabs value={activeTab} onTabChange={(value) => setActiveTab(value!)}>
             <Tabs.List
               sx={({ colors }) => ({
@@ -399,8 +413,8 @@ const MasterProductListPage = () => {
         </Flex>
       </Box>
 
-      <Box pos={"relative"} sx={{backgroundColor: 'white',}}>
-        <Box sx={{ width: "100%", overflowX: "auto", }}>
+      <Box pos={"relative"} sx={{ backgroundColor: "white" }}>
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
           <Table sx={{ width: "100%", minWidth: "1650px" }}>
             <Box
               component="thead"
@@ -437,7 +451,24 @@ const MasterProductListPage = () => {
         <LoadingOverlay visible={isLoading} />
       </Box>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default MasterProductListPage
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const auth = await authMiddleware(context);
+  if (!auth.status) {
+    return {
+      redirect: auth.redirect,
+    };
+  }
+
+  return {
+    props: {
+      user: auth.props?.user,
+    },
+  };
+};
+
+export default MasterProductListPage;

@@ -7,21 +7,39 @@ import {
   Header as MantineHeader,
   Menu,
   Text,
-} from "@mantine/core"
-import { useMediaQuery } from "@mantine/hooks"
-import Image from "next/image"
-import React from "react"
-import { AiFillQuestionCircle } from "react-icons/ai"
-import { BsList, BsPersonFill, BsQuestionCircleFill } from "react-icons/bs"
-import { FiChevronDown, FiRefreshCw, FiUser } from "react-icons/fi"
-import useNavbarExpand from "store/navbarExpand"
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import { UserLogin } from "interfaces/user";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { AiFillQuestionCircle } from "react-icons/ai";
+import { BsList, BsPersonFill, BsQuestionCircleFill } from "react-icons/bs";
+import { FiChevronDown, FiRefreshCw, FiUser } from "react-icons/fi";
+import useNavbarExpand from "store/navbarExpand";
 interface Props {
-  title: string
+  title: string;
+  user: UserLogin;
 }
-const Header: React.FC<Props> = ({ title }) => {
-  const { toggleExpand, expanded } = useNavbarExpand()
-  const lgScreen = useMediaQuery("(min-width: 1024px)")
-  const tabletScreen = useMediaQuery("(min-width: 768px)")
+const Header: React.FC<Props> = ({ title, user }) => {
+  const { toggleExpand, expanded } = useNavbarExpand();
+  const lgScreen = useMediaQuery("(min-width: 1024px)");
+  const tabletScreen = useMediaQuery("(min-width: 768px)");
+
+  const handleLogout = async () => {
+    const res = await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      window.location.href = "/auth/login";
+    } else {
+      console.log("error");
+    }
+  };
 
   return (
     <MantineHeader height={60} p={"xs"}>
@@ -143,7 +161,7 @@ const Header: React.FC<Props> = ({ title }) => {
                       />
                     }
                   >
-                    yusepjaelani861@gmail.com
+                    {user.user.email}
                   </Button>
                 ) : (
                   <ActionIcon>
@@ -151,18 +169,23 @@ const Header: React.FC<Props> = ({ title }) => {
                   </ActionIcon>
                 )}
               </Menu.Target>
-              <Menu.Dropdown miw={{xs: '236px'}}>
+              <Menu.Dropdown miw={{ xs: "236px" }}>
                 <Menu.Item>Account Info</Menu.Item>
-                <Menu.Item>Integration</Menu.Item>
+                <Menu.Item>
+                  <Link href="/integration/store-list" style={{
+                    textDecoration: "none",
+                    color: "inherit"
+                  }}>Integration</Link>
+                </Menu.Item>
                 <Menu.Item>Change Password</Menu.Item>
-                <Menu.Item>Logout</Menu.Item>
+                <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Flex>
         </Flex>
       </Flex>
     </MantineHeader>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

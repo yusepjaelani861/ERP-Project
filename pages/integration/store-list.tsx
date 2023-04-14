@@ -9,65 +9,117 @@ import {
   Footer,
   LoadingOverlay,
   Menu,
+  Modal,
   Select,
   Table,
   Tabs,
   Text,
-} from "@mantine/core"
-import DotBadge from "components/atoms/DotBadge"
-import MainLayout from "components/layouts/MainLayout"
-import SelectItemWithImage from "components/molecules/SelectItemWithImage"
-import TH from "components/molecules/TH"
-import TableNoData from "components/organisms/TableNoData"
-import integrationChannelList from "data/integrationChannelList"
-import Image from "next/image"
-import Link from "next/link"
-import { useCallback, useState } from "react"
+  TextInput,
+} from "@mantine/core";
+import DotBadge from "components/atoms/DotBadge";
+import MainLayout from "components/layouts/MainLayout";
+import SelectItemWithImage from "components/molecules/SelectItemWithImage";
+import TH from "components/molecules/TH";
+import TableNoData from "components/organisms/TableNoData";
+import integrationChannelList from "data/integrationChannelList";
+import { UserLogin } from "interfaces/user";
+import { GetServerSidePropsContext } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import {
   AiFillCaretDown,
   AiOutlineEdit,
   AiOutlinePlus,
   AiOutlineSearch,
-} from "react-icons/ai"
+} from "react-icons/ai";
 import {
   FiAlertCircle,
   FiChevronLeft,
   FiChevronRight,
   FiRefreshCw,
-} from "react-icons/fi"
-import { useUpdateEffect } from "usehooks-ts"
-const IntegrationStoreListPage = () => {
-  const [activeTab, setActiveTab] = useState("market-place")
-  const [isLoading, setIsLoading] = useState(false)
+} from "react-icons/fi";
+import { useUpdateEffect } from "usehooks-ts";
+import authMiddleware from "utils/authMiddleware";
+import axiosService from "utils/axiosService";
+import { Store } from "interfaces/store";
+
+interface PageProps {
+  user: UserLogin;
+}
+
+const IntegrationStoreListPage = ({ user }: PageProps) => {
+  const [activeTab, setActiveTab] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [stores, setStores] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [isOpen, setIsOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    id: "",
+    name: "",
+    shop_id: 0,
+    shop_type: "",
+  });
+  const [marketPlaceFilter, setMarketPlaceFilter] = useState("all");
+  const [marketPlaceIntegrationChannel, setMarketPlaceIntegrationChannel] =
+    useState("");
+  const [webstoreFilter, setWebstoreFilter] = useState("all");
+  const [webstoreIntegrationChannel, setWebstoreIntegrationChannel] =
+    useState("");
+  const [showAlert, setShowAlert] = useState(true);
+
+  const fetchDataStore = async () => {
+    const res = await axiosService(
+      `/store?page=${page}&limit=${limit}&filter=${marketPlaceFilter}&shop_type=${webstoreIntegrationChannel}`,
+      "GET",
+      {},
+      user.token
+    );
+
+    if (res.status === 200) {
+      setStores(res.data.data);
+      console.log(res.data.data);
+    }
+
+    return res.data.data;
+  };
+
+  console.log(webstoreIntegrationChannel);
+
+  useEffect(() => {
+    setActiveTab("market-place");
+  }, []);
 
   /** Simulation */
   const fetchData = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }
+      fetchDataStore()
+        .then((res) => {
+          console.log("ok");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsLoading(false);
+    }, 1000);
+  };
   useUpdateEffect(() => {
-    fetchData()
-  }, [activeTab])
+    fetchDataStore();
+  }, [activeTab]);
 
-  const [marketPlaceFilter, setMarketPlaceFilter] = useState("all")
-  const [marketPlaceIntegrationChannel, setMarketPlaceIntegrationChannel] =
-    useState("")
   useUpdateEffect(() => {
-    fetchData()
-  }, [marketPlaceFilter])
-  const [webstoreFilter, setWebstoreFilter] = useState("all")
-  const [webstoreIntegrationChannel, setWebstoreIntegrationChannel] =
-    useState("")
+    fetchDataStore();
+  }, [marketPlaceFilter]);
   useUpdateEffect(() => {
-    fetchData()
-  }, [webstoreFilter])
-  const [showAlert, setShowAlert] = useState(true)
+    fetchDataStore();
+  }, [webstoreFilter]);
   return (
     <MainLayout
       title="Master Product"
       sx={{ backgroundColor: "white", "& main": { paddingBottom: "56px" } }}
+      user={user}
     >
       {showAlert && (
         <Flex
@@ -181,24 +233,30 @@ const IntegrationStoreListPage = () => {
                   {
                     label: "All",
                     value: "all",
-                    count: 1,
+                    count: stores.length,
                   },
                   {
                     label: "Authorized",
                     value: "authorized",
-                    count: 1,
+                    count: stores.filter(
+                      (store: Store) => store.status === true
+                    ).length,
                     badgeColor: "green",
                   },
                   {
                     label: "Expired",
                     value: "expired",
-                    count: 0,
+                    count: stores.filter(
+                      (store: Store) => store.status === false
+                    ).length,
                     badgeColor: "red",
                   },
                   {
                     label: "Deactive",
                     value: "deactive",
-                    count: 0,
+                    count: stores.filter(
+                      (store: Store) => store.status === false
+                    ).length,
                     badgeColor: "gray",
                   },
                 ].map((filter) => (
@@ -255,9 +313,9 @@ const IntegrationStoreListPage = () => {
                 color="violet"
                 leftIcon={<FiRefreshCw />}
                 onClick={() => {
-                  setMarketPlaceFilter("all")
-                  setMarketPlaceIntegrationChannel("")
-                  fetchData()
+                  setMarketPlaceFilter("all");
+                  setMarketPlaceIntegrationChannel("");
+                  fetchDataStore();
                 }}
               >
                 Reset
@@ -287,59 +345,131 @@ const IntegrationStoreListPage = () => {
                     </tr>
                   </Box>
                   <tbody>
-                    <tr>
-                      <td>
-                        <Flex gap={8} align="center">
-                          <Image
-                            src="https://erp.ginee.com/erp/images/icon-channel-round/shopee.svg"
-                            alt="Shopee"
-                            width={32}
-                            height={32}
-                            unoptimized
-                          />
-                          yusepj861
-                          <ActionIcon
-                            size={"xs"}
+                    {stores.length > 0 ? (
+                      stores.map((store: Store, index) => (
+                        <tr key={index}>
+                          <td>
+                            <Flex gap={8} align="center">
+                              <Image
+                                src={
+                                  integrationChannelList.find(
+                                    (item) => item.slug === store.shop_type
+                                  )?.image ||
+                                  "https://erp.ginee.com/erp/images/icon-channel-round/shopee.svg"
+                                }
+                                alt={
+                                  integrationChannelList.find(
+                                    (item) => item.value === store.shop_type
+                                  )?.value || ""
+                                }
+                                width={32}
+                                height={32}
+                                unoptimized
+                              />
+                              {store.name}
+                              <ActionIcon
+                                size={"xs"}
+                                sx={{
+                                  "&:hover": { backgroundColor: "transparent" },
+                                }}
+                                onClick={() => {
+                                  setIsOpen(true);
+                                  setEditData({
+                                    id: store.id,
+                                    name: store.name,
+                                    shop_type: store.shop_type,
+                                    shop_id: store.shop_id,
+                                  });
+                                }}
+                              >
+                                <AiOutlineEdit />
+                              </ActionIcon>
+                            </Flex>
+                          </td>
+                          <td>
+                            <Flex gap={8} align="center">
+                              {store.status ? (
+                                <DotBadge color="green" />
+                              ) : (
+                                <DotBadge color="red" />
+                              )}
+                              {store.status ? "Authorized" : "Unauthorized"}
+                            </Flex>
+                          </td>
+                          <td>
+                            <Flex gap={8} align="center">
+                              <Box
+                                sx={{
+                                  boxShadow: "rgb(221, 221, 221) 0px 0px 4px",
+                                }}
+                                component={Image}
+                                src="https://erp.ginee.com/erp/webpack/assets/id-f624e2c8444a7794b357..svg"
+                                alt="Indonesian Flag"
+                                width="16"
+                                height={"12"}
+                              />
+                              Indonesia
+                            </Flex>
+                          </td>
+                          <td>
+                            {store.status && store.authorization_time
+                              ? new Date(
+                                  store.authorization_time
+                                ).toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                          <td>
+                            {store.status && store.authorization_time
+                              ? new Date(
+                                  store.authorization_time
+                                ).toLocaleDateString()
+                              : "N/A"}{" "}
+                            -{" "}
+                          </td>
+                          <td>
+                            <Flex direction={"column"} gap={4} align="start">
+                              <Button
+                                size="xs"
+                                color="violet"
+                                variant={"subtle"}
+                              >
+                                Pull Data
+                              </Button>
+                              <Button
+                                size="xs"
+                                color="violet"
+                                variant={"subtle"}
+                              >
+                                Delete Store
+                              </Button>
+                            </Flex>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6}>
+                          <Flex
+                            justify={"center"}
+                            align="center"
                             sx={{
-                              "&:hover": { backgroundColor: "transparent" },
+                              height: "100%",
+                              backgroundColor: "white",
+                              padding: "12px 16px",
                             }}
                           >
-                            <AiOutlineEdit />
-                          </ActionIcon>
-                        </Flex>
-                      </td>
-                      <td>
-                        <Flex gap={8} align="center">
-                          <DotBadge color="green" />
-                          Authorized
-                        </Flex>
-                      </td>
-                      <td>
-                        <Flex gap={8} align="center">
-                          <Box
-                            sx={{ boxShadow: "rgb(221, 221, 221) 0px 0px 4px" }}
-                            component={Image}
-                            src="https://erp.ginee.com/erp/webpack/assets/id-f624e2c8444a7794b357..svg"
-                            alt="Indonesian Flag"
-                            width="16"
-                            height={"12"}
-                          />
-                          Indonesia
-                        </Flex>
-                      </td>
-                      <td>25-03-2023 09:40</td>
-                      <td>359 day</td>
-                      <td>
-                        <Flex direction={"column"} gap={4} align="start">
-                          <Button size="xs" color="violet" variant={"subtle"}>
-                            Pull Data
-                          </Button>
-                          <Button size="xs" color="violet" variant={"subtle"}>
-                            Delete Store
-                          </Button>
-                        </Flex>
-                      </td>
-                    </tr>
+                            <Text
+                              sx={({ colors }) => ({
+                                fontSize: "12px",
+                                color: colors.gray[7],
+                              })}
+                            >
+                              No data found
+                            </Text>
+                          </Flex>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </Table>
                 {/* If no data render TableNoData here */}
@@ -458,7 +588,10 @@ const IntegrationStoreListPage = () => {
                 w={160}
                 clearable
                 value={webstoreIntegrationChannel}
-                onChange={(value) => setWebstoreIntegrationChannel(value!)}
+                // onChange={(value) => setWebstoreIntegrationChannel(value!)}
+                onChange={(value) => {
+                  setWebstoreIntegrationChannel(value!);
+                }}
               />
               <Button
                 size="xs"
@@ -467,7 +600,7 @@ const IntegrationStoreListPage = () => {
                 leftIcon={
                   <Box component={AiOutlineSearch} sx={{ fontSize: "14px" }} />
                 }
-                onClick={fetchData}
+                onClick={fetchDataStore}
               >
                 Search
               </Button>
@@ -477,9 +610,9 @@ const IntegrationStoreListPage = () => {
                 color="violet"
                 leftIcon={<FiRefreshCw />}
                 onClick={() => {
-                  setWebstoreFilter("all")
-                  setWebstoreIntegrationChannel("")
-                  fetchData()
+                  setWebstoreFilter("all");
+                  setWebstoreIntegrationChannel("");
+                  fetchDataStore();
                 }}
               >
                 Reset
@@ -508,61 +641,6 @@ const IntegrationStoreListPage = () => {
                       <TH label="Action" />
                     </tr>
                   </Box>
-                  {/* <tbody>
-                    <tr>
-                      <td>
-                        <Flex gap={8} align="center">
-                          <Image
-                            src="https://erp.ginee.com/erp/images/icon-channel-round/shopee.svg"
-                            alt="Shopee"
-                            width={32}
-                            height={32}
-                            unoptimized
-                          />
-                          yusepj861
-                          <ActionIcon
-                            size={"xs"}
-                            sx={{
-                              "&:hover": { backgroundColor: "transparent" },
-                            }}
-                          >
-                            <AiOutlineEdit />
-                          </ActionIcon>
-                        </Flex>
-                      </td>
-                      <td>
-                        <Flex gap={8} align="center">
-                          <DotBadge color="green" />
-                          Authorized
-                        </Flex>
-                      </td>
-                      <td>
-                        <Flex gap={8} align="center">
-                          <Box
-                            sx={{ boxShadow: "rgb(221, 221, 221) 0px 0px 4px" }}
-                            component={Image}
-                            src="https://erp.ginee.com/erp/webpack/assets/id-f624e2c8444a7794b357..svg"
-                            alt="Indonesian Flag"
-                            width="16"
-                            height={"12"}
-                          />
-                          Indonesia
-                        </Flex>
-                      </td>
-                      <td>25-03-2023 09:40</td>
-                      <td>359 day</td>
-                      <td>
-                        <Flex direction={"column"} gap={4} align="start">
-                          <Button size="xs" color="violet" variant={"subtle"}>
-                            Pull Data
-                          </Button>
-                          <Button size="xs" color="violet" variant={"subtle"}>
-                            Delete Store
-                          </Button>
-                        </Flex>
-                      </td>
-                    </tr>
-                  </tbody> */}
                 </Table>
                 {/* If no data render TableNoData here */}
                 <TableNoData />
@@ -912,8 +990,84 @@ const IntegrationStoreListPage = () => {
           </Flex>
         </Tabs.Panel>
       </Tabs>
-    </MainLayout>
-  )
-}
 
-export default IntegrationStoreListPage
+      <Modal
+        onClose={() => {
+          setIsOpen(false);
+          setEditData({
+            name: "",
+            id: "",
+            shop_id: 0,
+            shop_type: "",
+          });
+        }}
+        opened={isOpen}
+      >
+        <Modal.Header>
+          {/* <Text variant={"heading"}>Add New Integration</Text> */}
+          <h1
+            style={{
+              fontSize: "16px",
+              fontWeight: "bold",
+              lineHeight: "24px",
+              color: "#000000",
+            }}
+          >
+            Edit Name Store
+          </h1>
+        </Modal.Header>
+        <Modal.Body
+          style={{
+            marginBottom: "48px",
+          }}
+        >
+          <TextInput
+            label="Store Name"
+            placeholder="Enter Store Name"
+            style={{
+              borderRadius: "4px",
+            }}
+            value={editData?.name}
+            onChange={(e) => {
+              setEditData({
+                ...editData,
+                name: e.target.value,
+              });
+            }}
+          />
+        </Modal.Body>
+        <Button
+          variant={"primary"}
+          style={{
+            backgroundColor: "#7950f2",
+            color: "white",
+            position: "absolute",
+            right: "32px",
+            bottom: "16px",
+          }}
+        >
+          Save
+        </Button>
+      </Modal>
+    </MainLayout>
+  );
+};
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const auth = await authMiddleware(context);
+  if (!auth.status) {
+    return {
+      redirect: auth.redirect,
+    };
+  }
+
+  return {
+    props: {
+      user: auth.props?.user,
+    },
+  };
+};
+
+export default IntegrationStoreListPage;

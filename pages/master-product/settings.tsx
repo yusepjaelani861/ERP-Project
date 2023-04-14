@@ -1,11 +1,18 @@
-import { ActionIcon, Alert, Box, Flex, Tabs, Text } from "@mantine/core"
-import MainLayout from "components/layouts/MainLayout"
-import SettingInfo from "components/molecules/SettingInfo"
-import { AiOutlineEdit } from "react-icons/ai"
+import { ActionIcon, Alert, Box, Flex, Tabs, Text } from "@mantine/core";
+import MainLayout from "components/layouts/MainLayout";
+import SettingInfo from "components/molecules/SettingInfo";
+import { UserLogin } from "interfaces/user";
+import { GetServerSidePropsContext } from "next";
+import { AiOutlineEdit } from "react-icons/ai";
+import authMiddleware from "utils/authMiddleware";
 
-const ProductSettings = () => {
+interface PageProps {
+  user: UserLogin;
+}
+
+const ProductSettings = ({ user }: PageProps) => {
   return (
-    <MainLayout title="Master Product Settings">
+    <MainLayout title="Master Product Settings" user={user}>
       <Box px={32} py={10} sx={{ backgroundColor: "white" }}>
         <Tabs defaultValue={"master-product-settings"}>
           <Tabs.List
@@ -101,7 +108,24 @@ const ProductSettings = () => {
         </Tabs>
       </Box>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default ProductSettings
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const auth = await authMiddleware(context);
+  if (!auth.status) {
+    return {
+      redirect: auth.redirect,
+    };
+  }
+
+  return {
+    props: {
+      user: auth.props?.user,
+    },
+  };
+};
+
+export default ProductSettings;

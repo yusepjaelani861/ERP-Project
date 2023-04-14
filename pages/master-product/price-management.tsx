@@ -1,49 +1,60 @@
 import {
-  Alert, Box,
+  Alert,
+  Box,
   Button,
   Checkbox,
-  Flex, LoadingOverlay,
+  Flex,
+  LoadingOverlay,
   Menu,
   Select,
   Table,
-  Tabs, TextInput
-} from "@mantine/core"
-import MainLayout from "components/layouts/MainLayout"
-import FilterItem from "components/molecules/FilterItem"
-import SelectItemWithImage from "components/molecules/SelectItemWithImage"
-import TH from "components/molecules/TH"
-import TableNoData from "components/organisms/TableNoData"
-import { useCallback, useState } from "react"
-import { AiFillCaretDown } from "react-icons/ai"
-import { FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi"
-import { useUpdateEffect } from "usehooks-ts"
-const MasterPriceManagementPage = () => {
-  const [filter, setFilter] = useState("Master Product Name")
-  const [keyword, setKeyword] = useState("")
-  const [storeName, setStoreName] = useState("")
+  Tabs,
+  TextInput,
+} from "@mantine/core";
+import MainLayout from "components/layouts/MainLayout";
+import FilterItem from "components/molecules/FilterItem";
+import SelectItemWithImage from "components/molecules/SelectItemWithImage";
+import TH from "components/molecules/TH";
+import TableNoData from "components/organisms/TableNoData";
+import { UserLogin } from "interfaces/user";
+import { GetServerSidePropsContext } from "next";
+import { useCallback, useState } from "react";
+import { AiFillCaretDown } from "react-icons/ai";
+import { FiFilter, FiRefreshCw, FiSearch } from "react-icons/fi";
+import { useUpdateEffect } from "usehooks-ts";
+import authMiddleware from "utils/authMiddleware";
+
+interface PageProps {
+  user: UserLogin;
+}
+
+const MasterPriceManagementPage = ({ user }: PageProps) => {
+  const [filter, setFilter] = useState("Master Product Name");
+  const [keyword, setKeyword] = useState("");
+  const [storeName, setStoreName] = useState("");
 
   const resetFilterHandler = useCallback(() => {
-    setFilter("Master Product Name")
-    setKeyword("")
-    setStoreName("")
-  }, [])
+    setFilter("Master Product Name");
+    setKeyword("");
+    setStoreName("");
+  }, []);
 
-  const [activeTab, setActiveTab] = useState("price-list")
-  const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("price-list");
+  const [isLoading, setIsLoading] = useState(false);
 
   /** Simulation */
   const fetchData = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }
+      setIsLoading(false);
+    }, 1000);
+  };
   useUpdateEffect(() => {
-    fetchData()
-  }, [activeTab])
-  const [showAlert, setShowAlert] = useState(true)
+    fetchData();
+  }, [activeTab]);
+  const [showAlert, setShowAlert] = useState(true);
   return (
-    <MainLayout title="Price Management">
+    <MainLayout title="Price Management" user={user}>
       <Flex direction={"column"} p={16} gap={16}>
         {showAlert && (
           <Alert
@@ -205,7 +216,7 @@ const MasterPriceManagementPage = () => {
         <Tabs.Panel value="price-list">
           <Box pos={"relative"} sx={{ backgroundColor: "white" }}>
             <Box sx={{ width: "100%", overflowX: "auto" }}>
-              <Table sx={{ width: "100%", minWidth: '1440px' }}>
+              <Table sx={{ width: "100%", minWidth: "1440px" }}>
                 <Box
                   component="thead"
                   sx={({ colors }) => ({ backgroundColor: colors.gray[1] })}
@@ -242,7 +253,7 @@ const MasterPriceManagementPage = () => {
         <Tabs.Panel value="update-failed">
           <Box pos={"relative"} sx={{ backgroundColor: "white" }}>
             <Box sx={{ width: "100%", overflowX: "auto" }}>
-              <Table sx={{ width: "100%", minWidth: '1440px' }}>
+              <Table sx={{ width: "100%", minWidth: "1440px" }}>
                 <Box
                   component="thead"
                   sx={({ colors }) => ({ backgroundColor: colors.gray[1] })}
@@ -271,7 +282,24 @@ const MasterPriceManagementPage = () => {
         </Tabs.Panel>
       </Tabs>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default MasterPriceManagementPage
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const auth = await authMiddleware(context);
+  if (!auth.status) {
+    return {
+      redirect: auth.redirect,
+    };
+  }
+
+  return {
+    props: {
+      user: auth.props?.user,
+    },
+  };
+};
+
+export default MasterPriceManagementPage;

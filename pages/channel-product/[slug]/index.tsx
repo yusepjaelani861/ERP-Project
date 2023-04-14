@@ -14,57 +14,66 @@ import {
   Tabs,
   Text,
   TextInput,
-} from "@mantine/core"
-import MainLayout from "components/layouts/MainLayout"
-import FilterItem from "components/molecules/FilterItem"
-import SelectItemWithImage from "components/molecules/SelectItemWithImage"
-import TH from "components/molecules/TH"
-import TableNoData from "components/organisms/TableNoData"
-import Link from "next/link"
-import { useCallback, useState } from "react"
+} from "@mantine/core";
+import MainLayout from "components/layouts/MainLayout";
+import FilterItem from "components/molecules/FilterItem";
+import SelectItemWithImage from "components/molecules/SelectItemWithImage";
+import TH from "components/molecules/TH";
+import TableNoData from "components/organisms/TableNoData";
+import { UserLogin } from "interfaces/user";
+import { GetServerSidePropsContext } from "next";
+import Link from "next/link";
+import { useCallback, useState } from "react";
 import {
   AiFillCaretDown,
   AiFillInfoCircle,
   AiOutlinePlus,
-} from "react-icons/ai"
+} from "react-icons/ai";
 import {
   FiAlertCircle,
   FiFilter,
   FiPlus,
   FiRefreshCw,
   FiSearch,
-} from "react-icons/fi"
-import { ImFire, ImSad2 } from "react-icons/im"
-import { MdNewReleases } from "react-icons/md"
-import { useUpdateEffect } from "usehooks-ts"
-const ShopeeProductPage = () => {
-  const [filter, setFilter] = useState("Product Name")
-  const [keyword, setKeyword] = useState("")
-  const [MSKUBindingStatus, setMSKUBindingStatus] = useState("")
-  const [sortBy, setSortBy] = useState("")
+} from "react-icons/fi";
+import { ImFire, ImSad2 } from "react-icons/im";
+import { MdNewReleases } from "react-icons/md";
+import { useUpdateEffect } from "usehooks-ts";
+import authMiddleware from "utils/authMiddleware";
+
+interface PageProps {
+  user: UserLogin;
+  slug: string;
+}
+
+const ShopeeProductPage = ({ user, slug }: PageProps) => {
+  const [filter, setFilter] = useState("Product Name");
+  const [keyword, setKeyword] = useState("");
+  const [MSKUBindingStatus, setMSKUBindingStatus] = useState("");
+  const [sortBy, setSortBy] = useState("");
 
   const resetFilterHandler = useCallback(() => {
-    setFilter("Product Name")
-    setKeyword("")
-    setMSKUBindingStatus("")
-    setSortBy("")
-  }, [])
+    setFilter("Product Name");
+    setKeyword("");
+    setMSKUBindingStatus("");
+    setSortBy("");
+  }, []);
 
-  const [activeTab, setActiveTab] = useState("live")
-  const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("live");
+  const [isLoading, setIsLoading] = useState(false);
 
   /** Simulation */
   const fetchData = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }
+      setIsLoading(false);
+    }, 1000);
+  };
   useUpdateEffect(() => {
-    fetchData()
-  }, [activeTab])
+    fetchData();
+  }, [activeTab]);
   return (
-    <MainLayout title="Products / Shopee" sx={{ padding: 0 }}>
+    <MainLayout title="Products / Shopee" sx={{ padding: 0 }} user={user}>
       <Flex
         sx={{
           background: "white",
@@ -408,7 +417,25 @@ const ShopeeProductPage = () => {
         <LoadingOverlay visible={isLoading} />
       </Box>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default ShopeeProductPage
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const auth = await authMiddleware(context);
+  if (!auth.status) {
+    return {
+      redirect: auth.redirect,
+    };
+  }
+
+  return {
+    props: {
+      user: auth.props?.user,
+      slug: context.params?.slug
+    },
+  };
+};
+
+export default ShopeeProductPage;
