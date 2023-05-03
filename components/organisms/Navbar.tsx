@@ -9,10 +9,17 @@ import {
 } from "@mantine/core"
 import {
   AiFillDashboard,
+  AiFillDropboxSquare,
+  AiFillVideoCamera,
+  AiFillWechat,
   AiOutlineApartment,
   AiOutlineDashboard,
+  AiOutlineHome,
   AiOutlineLink,
+  AiOutlineOrderedList,
+  AiOutlinePartition,
   AiOutlineShopping,
+  AiOutlineUser,
 } from "react-icons/ai"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -22,6 +29,20 @@ const navLinks = [
     label: "Dashboard",
     icon: <AiOutlineDashboard />,
     href: "/dashboard",
+  },
+  {
+    label: "Order",
+    "icon": <AiOutlineOrderedList />,
+    items: [
+      {
+        label: "Order List",
+        href: "/order/order-list",
+      },
+      {
+        label: "Pending Order",
+        href: "#",
+      }
+    ]
   },
   {
     label: "Master Product",
@@ -45,11 +66,50 @@ const navLinks = [
     label: "Channel Product",
     icon: <AiOutlineApartment />,
     items: [
-      {
-        label: "Shopee",
-        href: "/channel-product/shopee",
-      },
+      // {
+      //   label: "Shopee",
+      //   href: "/channel-product/shopee",
+      // },
     ],
+  },
+  {
+    label: "Warehouse",
+    icon: <AiOutlineHome />,
+    items: [
+      {
+        label: "Warehouse Management",
+        // href: "/warehouse/warehouse-management",
+        href: "https://wms.o2ochannel.com",
+        target: "_blank",
+      }
+    ]
+  },
+  {
+    label: "Stock (Maintenance)",
+    icon: <AiOutlinePartition />,
+    items: [
+      {
+        label: "Stock List",
+        // href: "/stock/stock-list",
+        href: "#"
+      },
+      {
+        label: "Stock Settings",
+        // href: "/stock/stock-list",
+        href: "#"
+      }
+    ]
+  },
+  {
+    label: "Customer (Maintenance)",
+    icon: <AiOutlineUser />,
+    items: [
+      {
+        label: "Customer List",
+        // href: "/customer/customer-list",
+        href: "#"
+      }
+    ]
   },
   {
     label: "Integration",
@@ -62,6 +122,30 @@ const navLinks = [
       {
         label: "Add Integration",
         href: "/integration/add-integration",
+      },
+    ],
+  },
+  {
+    label: "Master Video (Coming Soon)",
+    icon: <AiFillVideoCamera />,
+    items: [
+      {
+        label: "Video List",
+        href: "#",
+      },
+      {
+        label: "Create Video",
+        href: "#",
+      },
+    ],
+  },
+  {
+    label: "Chat (Coming Soon)",
+    icon: <AiFillWechat />,
+    items: [
+      {
+        label: "Chat Customer",
+        href: "#",
       },
     ],
   },
@@ -98,6 +182,8 @@ const Navbar = () => {
                   "&[data-active]": {
                     backgroundColor: "transparent",
                   },
+                  paddingTop: "16px",
+                  paddingBottom: "16px",
                 })}
               >
                 {navLink.items.map((navLinkItem) => (
@@ -114,8 +200,10 @@ const Navbar = () => {
                         borderLeft: `3px solid ${colors.violet[5]}`,
                       },
                       "& .mantine-NavLink-label": {
-                        fontSize: "12px",
+                        fontSize: "14px",
                       },
+                      paddingTop: "14px",
+                    paddingBottom: "14px",
                     })}
                   />
                 ))}

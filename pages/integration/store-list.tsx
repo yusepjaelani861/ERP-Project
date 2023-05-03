@@ -189,7 +189,7 @@ const IntegrationStoreListPage = ({ user }: PageProps) => {
               })}
             >
               <Tabs.Tab value="market-place">
-                Market Place <Badge>1</Badge>
+                Market Place <Badge>0</Badge>
               </Tabs.Tab>
               <Tabs.Tab value="webstore">
                 Webstore <Badge>0</Badge>

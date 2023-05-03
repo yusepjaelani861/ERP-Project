@@ -64,7 +64,7 @@ const AuthLayout: React.FC<Props> = ({ children, title }) => {
             }}
           >
             <Image
-              src={"/assets/logo-2.svg"}
+              src={"/assets/logo-o2o.png"}
               width={110}
               height={48}
               alt="logo"
@@ -95,7 +95,7 @@ const AuthLayout: React.FC<Props> = ({ children, title }) => {
               },
             }}
           >
-            <Image src={"/assets/logo.svg"} width={48} height={48} alt="logo" />
+            <Image src={"/assets/logo-o2o.png"} width={48} height={48} alt="logo" />
           </Box>
           {children}
         </Box>
@@ -110,7 +110,7 @@ const AuthLayout: React.FC<Props> = ({ children, title }) => {
           color: "#606c80",
         }}
       >
-        ©2023 Ginee Technology Pte Ltd
+        ©2023 O2O Technology Pte Ltd
       </Text>
     </Flex>
   )

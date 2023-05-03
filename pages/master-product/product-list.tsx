@@ -122,12 +122,12 @@ const MasterProductListPage = ({ user }: PageProps) => {
             placeholder="Store without sales"
             itemComponent={SelectItemWithImage}
             data={[
-              {
-                label: "yusep8601",
-                value: "yusep8601",
-                image:
-                  "https://cdn-erp.ginee.com/crm/stag/genie_20200108115600831_0236379310.png",
-              },
+              // {
+              //   label: "yusep8601",
+              //   value: "yusep8601",
+              //   image:
+              //     "https://cdn-erp.ginee.com/crm/stag/genie_20200108115600831_0236379310.png",
+              // },
             ]}
             size="xs"
             clearable
@@ -403,7 +403,10 @@ const MasterProductListPage = ({ user }: PageProps) => {
                 </Button>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item>Add Product</Menu.Item>
+                <Menu.Item><Link href="/master-product/add-product" style={{
+                  textDecoration: "none",
+                  color: "inherit"
+                }}>Add Product</Link></Menu.Item>
                 <Menu.Item>Add Combined Product</Menu.Item>
                 <Menu.Item>Auto add by Store</Menu.Item>
                 <Menu.Item>Refer Channel Products</Menu.Item>

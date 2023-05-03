@@ -7,27 +7,83 @@ import {
   Tabs,
   Text,
   TextInput,
-} from "@mantine/core"
-import { useMediaQuery } from "@mantine/hooks"
-import AuthLayout from "components/layouts/AuthLayout"
-import PhoneInput from "components/molecules/PhoneInput"
-import SendOTPButton from "components/organisms/SendOTPButton"
-import Link from "next/link"
-import { useState } from "react"
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import AuthLayout from "components/layouts/AuthLayout";
+import PhoneInput from "components/molecules/PhoneInput";
+import SendOTPButton from "components/organisms/SendOTPButton";
+import { setCookies } from "cookies-next";
+import { UserLogin } from "interfaces/user";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import axiosService from "utils/axiosService";
 
 const SignUpPage = () => {
-  const lgScreen = useMediaQuery("(min-width: 1024px)")
-  const [phone1, setPhone1] = useState({
-    code: "+62",
-    number: "",
-  })
-  const [phone2, setPhone2] = useState({
-    code: "+62",
-    number: "",
-  })
+  const lgScreen = useMediaQuery("(min-width: 1024px)");
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [confirmPrivacy, setConfirmPrivacy] = useState(false);
+  const [type, setType] = useState("email");
+  const router = useRouter();
+
+  const [errors, setErrors] = useState(false);
+  const [errorMessages, setErrorMessages] = useState("");
+
+  useEffect(() => {}, []);
+
+  const handleRegister = async () => {
+    try {
+      const response = await axiosService(`/auth/register`, "POST", {
+        name,
+        phone_number: phone,
+        email,
+        password,
+        password_confirmation: passwordConfirmation,
+        type,
+      });
+
+      const res: UserLogin = response.data.data;
+      setCookies("token", res.token, {
+        maxAge: res.expiredIn,
+        path: "/",
+        sameSite: "lax",
+        domain: process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000",
+        httpOnly: true,
+      });
+      document.cookie = `token=${res.token}; max-age=${
+        res.expiredIn
+      }; path=/; domain=${
+        process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000"
+      };`;
+      console.log(res);
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.log(error);
+      setErrorMessages(error.response?.data?.message);
+      setErrors(true);
+    }
+  };
 
   return (
     <AuthLayout title="Sign Up">
+      {errors && (
+        <Text
+          sx={{
+            textAlign: "center",
+            margin: 0,
+            fontSize: "14px",
+            color: "red",
+          }}
+          component={"p"}
+        >
+          {errorMessages}
+        </Text>
+      )}
       <Tabs defaultValue={"email"}>
         <Tabs.List
           sx={{
@@ -36,40 +92,66 @@ const SignUpPage = () => {
             },
           }}
         >
-          <Tabs.Tab value="email">Email</Tabs.Tab>
-          <Tabs.Tab value="phone">Phone</Tabs.Tab>
+          <Tabs.Tab
+            value="email"
+            onClick={() => {
+              setType("email");
+            }}
+          >
+            Email
+          </Tabs.Tab>
+          <Tabs.Tab
+            value="phone"
+            onClick={() => {
+              setType("phone");
+            }}
+          >
+            Phone
+          </Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="email" mt={24}>
           <Flex direction={"column"} gap={16}>
             <TextInput
+              placeholder="Please input your name"
+              size={lgScreen ? "lg" : "md"}
+              radius="md"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+            <TextInput
               placeholder="Please input your email"
               size={lgScreen ? "lg" : "md"}
               radius="md"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             />
             <TextInput
-              placeholder="Email OTP code"
+              type="number"
+              placeholder="Please input your phone number"
               size={lgScreen ? "lg" : "md"}
               radius="md"
-              rightSection={
-                <SendOTPButton
-                  credentials=""
-                  onRequiredError={() => {
-                    console.log("Please enter email")
-                  }}
-                />
-              }
-              rightSectionWidth={"fit-content"}
-            />
-            <PhoneInput
-              size={lgScreen ? "lg" : "md"}
-              radius="md"
-              onChange={(value) => setPhone1(value)}
-              value={phone1}
+              onChange={(e) => {
+                setPhone(e.target.value);
+              }}
             />
             <PasswordInput
               placeholder="Please enter password"
               size={lgScreen ? "lg" : "md"}
               radius="md"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
+
+            <PasswordInput
+              placeholder="Please enter password confirmation"
+              size={lgScreen ? "lg" : "md"}
+              radius="md"
+              onChange={(e) => {
+                setPasswordConfirmation(e.target.value);
+              }}
             />
             <Checkbox
               size={"xs"}
@@ -85,6 +167,9 @@ const SignUpPage = () => {
                   </Anchor>
                 </>
               }
+              onChange={(e) => {
+                setConfirmPrivacy(e.target.checked);
+              }}
             />
             <Button
               variant={"filled"}
@@ -92,7 +177,8 @@ const SignUpPage = () => {
               size={lgScreen ? "lg" : "md"}
               radius="md"
               sx={{ fontWeight: "normal" }}
-              disabled
+              disabled={!confirmPrivacy}
+              onClick={handleRegister}
             >
               Next Step
             </Button>
@@ -109,13 +195,25 @@ const SignUpPage = () => {
         </Tabs.Panel>
         <Tabs.Panel value="phone" mt={24}>
           <Flex direction={"column"} gap={16}>
-            <PhoneInput
+            <TextInput
+              placeholder="Please input your name"
               size={lgScreen ? "lg" : "md"}
               radius="md"
-              onChange={(value) => setPhone2(value)}
-              value={phone2}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
             />
             <TextInput
+              type="number"
+              placeholder="Please input your phone number"
+              size={lgScreen ? "lg" : "md"}
+              radius="md"
+              onChange={(e) => {
+                setPhone(e.target.value);
+              }}
+              required
+            />
+            {/* <TextInput
               placeholder="Verification Code"
               size={lgScreen ? "lg" : "md"}
               radius="md"
@@ -128,11 +226,23 @@ const SignUpPage = () => {
                 />
               }
               rightSectionWidth={"fit-content"}
-            />
+            /> */}
             <PasswordInput
               placeholder="Please enter password"
               size={lgScreen ? "lg" : "md"}
               radius="md"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
+
+            <PasswordInput
+              placeholder="Please enter password confirmation"
+              size={lgScreen ? "lg" : "md"}
+              radius="md"
+              onChange={(e) => {
+                setPasswordConfirmation(e.target.value);
+              }}
             />
             <Checkbox
               size={"xs"}
@@ -148,6 +258,9 @@ const SignUpPage = () => {
                   </Anchor>
                 </>
               }
+              onChange={(e) => {
+                setConfirmPrivacy(e.target.checked);
+              }}
             />
             <Button
               variant={"filled"}
@@ -155,7 +268,8 @@ const SignUpPage = () => {
               size={lgScreen ? "lg" : "md"}
               radius="md"
               sx={{ fontWeight: "normal" }}
-              disabled
+              disabled={!confirmPrivacy}
+              onClick={handleRegister}
             >
               Next Step
             </Button>
@@ -172,7 +286,7 @@ const SignUpPage = () => {
         </Tabs.Panel>
       </Tabs>
     </AuthLayout>
-  )
-}
+  );
+};
 
-export default SignUpPage
+export default SignUpPage;

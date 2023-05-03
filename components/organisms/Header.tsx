@@ -49,7 +49,8 @@ const Header: React.FC<Props> = ({ title, user }) => {
       >
         {expanded ? (
           <Image
-            src="/assets/logo-ginee-erp.svg"
+            // src="/assets/logo-ginee-erp.svg"
+            src="/assets/logo-o2o.png"
             alt="logo"
             width={130}
             height={37}

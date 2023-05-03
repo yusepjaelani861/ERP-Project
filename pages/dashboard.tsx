@@ -14,7 +14,7 @@ const DashboardPage = ({ user }: PageProps) => {
     <MainLayout title="Dashboard" user={user}>
       <Flex direction={"column"} p={16} gap={16}>
         <h1>Dashboard</h1>
-        <h2>{user.user.name}</h2>
+        {/* <h2>{user.user.name}</h2> */}
       </Flex>
     </MainLayout>
   );

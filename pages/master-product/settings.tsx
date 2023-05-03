@@ -36,7 +36,7 @@ const ProductSettings = ({ user }: PageProps) => {
             <Flex direction={"column"} gap={16}>
               <SettingInfo
                 title="Automatically bind the Master SKU"
-                description="After enabling the setting, if the Store SKU has the same name as the Master SKU, it will be automatically bound, and it also supports custom automatic binding rules. It is only valid for channel products that are synchronized to Ginee and are not bound to the Master SKU."
+                description="After enabling the setting, if the Store SKU has the same name as the Master SKU, it will be automatically bound, and it also supports custom automatic binding rules. It is only valid for channel products that are synchronized to O2O and are not bound to the Master SKU."
                 color={"violet"}
               />
               <SettingInfo
@@ -87,7 +87,7 @@ const ProductSettings = ({ user }: PageProps) => {
           <Tabs.Panel value="add-product-setting">
             <SettingInfo
               title="Logistic template setting"
-              description="According to your settings, Ginee will automatically select the logistics options for you if the logistics options are empty when adding Shopee products, to improve the efficiency of adding products"
+              description="According to your settings, O2O will automatically select the logistics options for you if the logistics options are empty when adding Shopee products, to improve the efficiency of adding products"
               color={"violet"}
             />
           </Tabs.Panel>

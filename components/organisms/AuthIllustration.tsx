@@ -44,23 +44,26 @@ const AuthIllustration = () => {
       >
         <Carousel.Slide>
           <AuthIllustrationItem
-            title="Ginee ERP"
+            title="O2O ERP"
             description="Integrating all of your sales channels and enhancing business efficiency to manage stocks, orders, and products in just one platform"
-            illustrationSrc="/assets/ginee-erp.png"
+            // illustrationSrc="/assets/ginee-erp.png"
+            illustrationSrc="/assets/logo-o2o.png"
           />
         </Carousel.Slide>
         <Carousel.Slide>
           <AuthIllustrationItem
-            title="Ginee WMS"
+            title="O2O WMS"
             description="IEstablishing faster warehouse workflow and centralizing multi-warehouse management system in just one platform"
-            illustrationSrc="/assets/ginee-wms.png"
+            // illustrationSrc="/assets/ginee-wms.png"
+            illustrationSrc="/assets/logo-o2o.png"
           />
         </Carousel.Slide>
         <Carousel.Slide>
           <AuthIllustrationItem
-            title="Ginee Chat"
+            title="O2O Chat"
             description="Amplifying real-time communication with all of your customers from various channels in just one platform"
-            illustrationSrc="/assets/ginee-chat.png"
+            // illustrationSrc="/assets/ginee-chat.png"
+            illustrationSrc="/assets/logo-o2o.png"
           />
         </Carousel.Slide>
       </Carousel>
